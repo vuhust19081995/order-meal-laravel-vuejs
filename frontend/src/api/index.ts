@@ -6,7 +6,7 @@ import type {
     TMealCategoriesResponse,
     TRestaurantsResponse
 } from "src/type";
-
+import {useAppStore} from "@/stores";
 const BASE_URL = 'http://127.0.0.1:8000/api'
 const request = axios.create({
     baseURL: BASE_URL,
@@ -15,6 +15,31 @@ const request = axios.create({
         "Content-type": "application/json"
     }
 })
+
+const store = useAppStore();
+// Add a request interceptor
+request.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  store.setIsLoading(true)
+  return config;
+}, function (error) {
+  // Do something with request error
+  store.setIsLoading(false)
+  return Promise.reject(error);
+});
+
+// Add a response interceptor
+request.interceptors.response.use(function (response) {
+  // Any status code that lie within the range of 2xx cause this function to trigger
+  // Do something with response data
+  store.setIsLoading(false)
+  return response;
+}, function (error) {
+  // Any status codes that falls outside the range of 2xx cause this function to trigger
+  // Do something with response error
+  store.setIsLoading(false)
+  return Promise.reject(error);
+});
 
 export function getMealCategories(query = null): Promise<AxiosResponse<TMealCategoriesResponse>> {
     return request({
