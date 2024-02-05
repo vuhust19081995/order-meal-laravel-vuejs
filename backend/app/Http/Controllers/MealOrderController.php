@@ -20,6 +20,7 @@ class MealOrderController extends Controller
     {
         $orders = Order::query()
             ->with(['dishes', 'mealCategory', 'restaurant'])
+            ->latest()
             ->get();
 
         return response()->json(['success' => true, 'data' => $orders]);

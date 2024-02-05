@@ -65,7 +65,7 @@ export function getDishesForSelection(mealCategoryId: number | null, restaurantI
     });
 }
 
-export function fetchMealOrderList(query?: any): Promise<TGetMealOrderListResponse> {
+export function getMealOrderList(query?: any): Promise<TGetMealOrderListResponse> {
   return request({
     url: `/meal-orders`,
     method: 'get',

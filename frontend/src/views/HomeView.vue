@@ -6,7 +6,7 @@ import StepThreeForm from "@/components/StepThreeForm.vue";
 import Preview from "@/components/Preview.vue";
 import {
   createMealOrder,
-  fetchMealOrderList,
+  getMealOrderList,
   getDishesForSelection,
   getMealCategories,
   getRestaurantByMealCategories
@@ -67,16 +67,12 @@ const previewData: ComputedRef<TPreviewData> = computed(() => {
   }
 })
 
-async function fetchMealCategories() {
-  const response = await getMealCategories()
-  mealCategories.value = response.data.data ?? []
+async function fetchData() {
+  const [mcResponse, olResponse] = await Promise.all([getMealCategories(), getMealOrderList()]);
+  mealCategories.value = mcResponse.data.data ?? []
+  orderList.value = olResponse.data.data ?? []
 }
-
-async function fetchOrderList() {
-  const response = await fetchMealOrderList()
-
-  orderList.value = response.data.data ?? []
-}
+fetchData()
 
 async function submitOrder() {
   try {
@@ -91,7 +87,8 @@ async function submitOrder() {
       message.success('Create Meal Order successfully!')
       formData.value = {...initFormData}
       currentStep.value = 0;
-      await fetchOrderList()
+      const mealOrderList = await getMealOrderList()
+      orderList.value = mealOrderList.data.data ?? []
     }
   } catch (e) {
     console.log(e);
@@ -120,9 +117,6 @@ watch(() => formData.value.restaurant_id, async (newValue, oldValue) => {
     },
   ]
 })
-
-fetchMealCategories();
-fetchOrderList();
 
 </script>
 
