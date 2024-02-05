@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import {useAppStore} from "@/stores";
+import { useAppStore } from '@/stores'
 
 const appStore = useAppStore()
 </script>
 
 <template>
   <a-spin class="container" :spinning="appStore.isLoading">
-    <RouterView/>
+    <RouterView />
   </a-spin>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

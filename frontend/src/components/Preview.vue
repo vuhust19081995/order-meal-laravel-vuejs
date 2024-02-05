@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type {TPreviewData} from "@/type";
+import type { TPreviewData } from '@/type'
 
-const props = defineProps<{ previewData: TPreviewData }>();
-const emit = defineEmits(['onSubmit', 'previousStep']);
+const props = defineProps<{ previewData: TPreviewData }>()
+const emit = defineEmits(['onSubmit', 'previousStep'])
 </script>
 
 <template>

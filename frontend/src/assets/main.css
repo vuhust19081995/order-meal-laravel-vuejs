@@ -1,5 +1,6 @@
 @import './base.css';
 
-#app, .container {
+#app,
+.container {
   height: 100%;
 }

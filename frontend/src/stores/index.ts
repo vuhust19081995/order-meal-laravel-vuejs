@@ -1,5 +1,5 @@
-import {ref} from "vue";
-import {defineStore} from "pinia";
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
 
 export const useAppStore = defineStore('app', () => {
   let isLoading = ref<boolean>(false)
@@ -8,5 +8,5 @@ export const useAppStore = defineStore('app', () => {
     isLoading.value = value
   }
 
-  return {isLoading, setIsLoading}
+  return { isLoading, setIsLoading }
 })
