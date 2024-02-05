@@ -4,7 +4,7 @@
 
 # Front-End
 
-![home-page](https://github.com/vuhust19081995/order-meal-laravel-vuejs/assets/29648335/bfa5d91e-76be-4b84-aa81-dde80e3f6b9a)
+![home-page](https://github.com/vuhust19081995/order-meal-laravel-vuejs/assets/29648335/43731cfc-3af7-4f57-9fe5-9de37cb1c4a5)
 
 # Back-End
 
