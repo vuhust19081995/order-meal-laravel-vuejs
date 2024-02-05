@@ -27,5 +27,6 @@ Route::controller(MealCategoryController::class)->group(function (){
 });
 
 Route::controller(MealOrderController::class)->group(function (){
+    Route::get('/meal-orders', 'index')->name('meal-order.index');
     Route::post('/meal-orders', 'store')->name('meal-order.store');
 });

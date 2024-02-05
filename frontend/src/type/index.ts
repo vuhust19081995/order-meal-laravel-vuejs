@@ -1,7 +1,7 @@
 // Types for http
 export type THttpResponse<T, E> = {
     success: boolean,
-    data: T | null,
+    data: T,
     errors: E
 }
 
@@ -9,11 +9,24 @@ export type TMealCategoriesResponse = THttpResponse<{ id: number; name: string }
 export type TRestaurantsResponse = THttpResponse<{ id: number; name: string }[], any>
 export type TDishesResponse = THttpResponse<{ id: number; name: string }[], any>
 export type TCreateMealOrderResponse = THttpResponse<any, any>
+export type TMealOrder = {
+    meal_category: {
+        id: number;
+        name: string
+    };
+    restaurant: {
+        id: number;
+        name: string
+    };
+    number_of_people: number;
+    dishes: { id: number; name: string; extra: { quantity: number } }[]
+}
+export type TGetMealOrderListResponse = THttpResponse<TMealOrder[], any>
 
 export type TCreateMealOrderPayload = {
     meal_category_id: number;
     number_of_people: number;
-    restaurant_id: number,
+    restaurant_id: number;
     dishes: { id: number; quantity: number }[]
 }
 

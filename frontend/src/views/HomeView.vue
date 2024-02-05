@@ -4,9 +4,15 @@ import StepOneForm from "@/components/StepOneForm.vue";
 import StepTwoForm from "@/components/StepTwoForm.vue";
 import StepThreeForm from "@/components/StepThreeForm.vue";
 import Preview from "@/components/Preview.vue";
-import {createMealOrder, getDishesForSelection, getMealCategories, getRestaurantByMealCategories} from "@/api";
+import {
+  createMealOrder,
+  fetchMealOrderList,
+  getDishesForSelection,
+  getMealCategories,
+  getRestaurantByMealCategories
+} from "@/api";
 import {message} from "ant-design-vue";
-import type {TMealOrderForm, TPreviewData} from "src/type";
+import type {TMealOrder, TMealOrderForm, TPreviewData} from "src/type";
 import type {TCreateMealOrderPayload} from "src/type";
 
 const currentStep = ref(0);
@@ -36,6 +42,7 @@ const initFormData = {
     },
   ]
 }
+const orderList = ref<TMealOrder[]>([]);
 let mealCategories = ref<{
   id: number,
   name: string
@@ -65,6 +72,12 @@ async function fetchMealCategories() {
   mealCategories.value = response.data.data ?? []
 }
 
+async function fetchOrderList() {
+  const response = await fetchMealOrderList()
+
+  orderList.value = response.data.data ?? []
+}
+
 async function submitOrder() {
   try {
     const payload: TCreateMealOrderPayload = {
@@ -78,6 +91,7 @@ async function submitOrder() {
       message.success('Create Meal Order successfully!')
       formData.value = {...initFormData}
       currentStep.value = 0;
+      await fetchOrderList()
     }
   } catch (e) {
     console.log(e);
@@ -108,75 +122,101 @@ watch(() => formData.value.restaurant_id, async (newValue, oldValue) => {
 })
 
 fetchMealCategories();
+fetchOrderList();
 
 </script>
 
 <template>
-  <a-card title="Order Meal" class="order-form">
-    <div class="steps">
-      <a-steps :current="currentStep"
-               :items="steps">
-      </a-steps>
-    </div>
-    <div class="step-content">
-      <StepOneForm
-          v-if="currentStep===0"
-          :meal-categories="mealCategories"
-          v-model:form-data="formData"
-          @next-step="currentStep++"
-      >
-      </StepOneForm>
-      <StepTwoForm
-          v-if="currentStep===1"
-          v-model:form-data="formData"
-          :restaurants="restaurants"
-          @next-step="currentStep++"
-          @previous-step="currentStep--"
-      >
-      </StepTwoForm>
-      <StepThreeForm
-          v-if="currentStep===2"
-          :dishes-for-selection="dishesForSelection"
-          v-model:form-data="formData"
-          @next-step="currentStep++"
-          @previous-step="currentStep--"
-      >
+  <a-flex class="order-container" vertical>
+    <a-card title="Order Meal">
+      <div class="steps">
+        <a-steps :current="currentStep"
+                 :items="steps">
+        </a-steps>
+      </div>
+      <div class="step-content">
+        <StepOneForm
+            v-if="currentStep===0"
+            :meal-categories="mealCategories"
+            v-model:form-data="formData"
+            @next-step="currentStep++"
+        >
+        </StepOneForm>
+        <StepTwoForm
+            v-if="currentStep===1"
+            v-model:form-data="formData"
+            :restaurants="restaurants"
+            @next-step="currentStep++"
+            @previous-step="currentStep--"
+        >
+        </StepTwoForm>
+        <StepThreeForm
+            v-if="currentStep===2"
+            :dishes-for-selection="dishesForSelection"
+            v-model:form-data="formData"
+            @next-step="currentStep++"
+            @previous-step="currentStep--"
+        >
 
-      </StepThreeForm>
-      <Preview
-          v-if="currentStep===3"
-          @previous-step="currentStep--"
-          @on-submit="submitOrder"
-          :preview-data="previewData"
-      >
+        </StepThreeForm>
+        <Preview
+            v-if="currentStep===3"
+            @previous-step="currentStep--"
+            @on-submit="submitOrder"
+            :preview-data="previewData"
+        >
 
-      </Preview>
-    </div>
-  </a-card>
+        </Preview>
+      </div>
+    </a-card>
 
+    <a-card class="order-list" title="Order List">
+      <a-flex v-for="order in orderList" vertical>
+        <a-flex>
+          <a-col :span="8"><h3>Meal:</h3></a-col>
+          <a-col :span="16">{{ order.meal_category.name }}</a-col>
+        </a-flex>
+        <a-flex>
+          <a-col :span="8"><h3>No of People:</h3></a-col>
+          <a-col :span="16">{{ order.number_of_people }}</a-col>
+        </a-flex>
+        <a-flex>
+          <a-col :span="8"><h3>Restaurant:</h3></a-col>
+          <a-col :span="16">{{ order.restaurant.name }}</a-col>
+        </a-flex>
+        <a-flex>
+          <a-col :span="8"><h3>Dishes:</h3></a-col>
+          <a-col :span="16">
+            <p v-for="dish in order.dishes">{{ dish.name }} - {{ dish.extra.quantity }}</p>
+          </a-col>
+        </a-flex>
+        <hr>
+      </a-flex>
+    </a-card>
+  </a-flex>
 </template>
 
 <style scoped>
 @media only screen and (max-width: 576px) {
-  .order-form {
+  .order-container {
     max-width: 95%;
   }
 }
 
 @media only screen and (min-width: 576px) {
-  .order-form {
+  .order-container {
     max-width: 90%;
   }
 }
 
 @media only screen and (min-width: 1140px) {
-  .order-form {
+  .order-container {
     max-width: 60%;
   }
 }
 
-.order-form {
-  margin: 3rem auto 0;
+.order-container {
+  margin: 3rem auto 0 auto;
 }
 
 .steps {
@@ -185,6 +225,10 @@ fetchMealCategories();
 
 .step-content {
   margin-bottom: 3rem;
+}
+
+.order-list {
+  margin-top: 3rem;
 }
 </style>
 

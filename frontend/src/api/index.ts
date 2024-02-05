@@ -1,10 +1,10 @@
 import axios, {type AxiosResponse} from "axios";
 import type {
-    TCreateMealOrderPayload,
-    TCreateMealOrderResponse,
-    TDishesResponse,
-    TMealCategoriesResponse,
-    TRestaurantsResponse
+  TCreateMealOrderPayload,
+  TCreateMealOrderResponse,
+  TDishesResponse, TGetMealOrderListResponse,
+  TMealCategoriesResponse,
+  TRestaurantsResponse
 } from "src/type";
 import {useAppStore} from "@/stores";
 const BASE_URL = 'http://127.0.0.1:8000/api'
@@ -63,6 +63,14 @@ export function getDishesForSelection(mealCategoryId: number | null, restaurantI
         method: 'get',
         params: query
     });
+}
+
+export function fetchMealOrderList(query?: any): Promise<TGetMealOrderListResponse> {
+  return request({
+    url: `/meal-orders`,
+    method: 'get',
+    params: query
+  });
 }
 
 export function createMealOrder(order: TCreateMealOrderPayload): Promise<TCreateMealOrderResponse> {
